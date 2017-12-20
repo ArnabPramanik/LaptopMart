@@ -18,5 +18,14 @@ else
     <ul class="nav navbar-nav navbar-right">
         <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Admin/User<span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="@Url.Action("Index","Admin")">My Upcoming Gigs</a></li>
+                <li><a class="dropdown-item" href="@Url.Action("Index","User")">Gigs I'm Going</a></li>
+            </ul>
+        </li>
     </ul>
 }
