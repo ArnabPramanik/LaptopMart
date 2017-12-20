@@ -1,14 +1,11 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
+﻿using LaptopMart.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using LaptopMart.Models;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
 
 namespace LaptopMart.Controllers
 {
@@ -17,9 +14,10 @@ namespace LaptopMart.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private ApplicationDbContext.ApplicationDbContext context;
         public AccountController()
         {
+            context = new ApplicationDbContext.ApplicationDbContext();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -139,6 +137,9 @@ namespace LaptopMart.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            ViewBag.Name = context.Roles.Where(u => !u.Name.Contains("SuperAdmin"))
+                .ToList();
+           
             return View();
         }
 
@@ -169,6 +170,8 @@ namespace LaptopMart.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            ViewBag.Name = context.Roles.Where(u => !u.Name.Contains("SuperAdmin"))
+                .ToList();
             return View(model);
         }
 
