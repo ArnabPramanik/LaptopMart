@@ -1,7 +1,7 @@
 ﻿using LaptopMart.Models;
 using System.Data.Entity;
 
-namespace LaptopMart.ApplicationDbContext
+namespace LaptopMart.ApplicationDb
 {
     public interface IApplicationDbContext
     {

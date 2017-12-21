@@ -1,13 +1,32 @@
-﻿using System.Web.Mvc;
+﻿using LaptopMart.Contracts;
+using System.Web.Mvc;
 
 namespace LaptopMart.Controllers
 {
+    [Authorize(Roles = Roles.RoleAdmin)]
     public class AdminController : Controller
     {
         // GET: Admin
-        public ActionResult Index()
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AdminController(IUnitOfWork unitOfWork)
         {
-            return View("/Views/Shared/Index.cshtml");
+            _unitOfWork = unitOfWork;
         }
+
+        public ActionResult ShowCategories()
+        {
+
+            return View();
+        }
+
+        public ActionResult ShowFormCategory()
+        {
+            
+
+            return View();
+        }
+
+        
     }
 }

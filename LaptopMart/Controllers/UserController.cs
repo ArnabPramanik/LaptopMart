@@ -2,6 +2,7 @@
 
 namespace LaptopMart.Controllers
 {
+    [Authorize(Roles = "User")]
     public class UserController : Controller
     {
         // GET: User

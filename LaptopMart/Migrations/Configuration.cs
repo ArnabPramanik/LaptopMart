@@ -1,15 +1,16 @@
+using LaptopMart.ApplicationDb;
 using System.Data.Entity.Migrations;
 
 namespace LaptopMart.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext.ApplicationDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(ApplicationDbContext.ApplicationDbContext context)
+        protected override void Seed(ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

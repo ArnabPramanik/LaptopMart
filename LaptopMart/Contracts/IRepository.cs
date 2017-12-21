@@ -2,13 +2,23 @@
 
 namespace LaptopMart.Contracts
 {
-    public interface IRepository<T>
+    public interface IRepository<TEntity> where TEntity : class
     {
-        void Create(T t);
-        IEnumerable<T> ReadAll();
-        T Read(int id);
-        void Update(T t);
+        void Create(TEntity t);
+
+
+        IEnumerable<TEntity> ReadAll();
+
+
+        TEntity Read(int id);
+
+
+        void Update(TEntity t);
+
+
         void Delete(int id);
+
+
 
     }
 }

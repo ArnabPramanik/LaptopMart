@@ -1,8 +1,8 @@
-﻿using System.Data.Entity;
-using LaptopMart.Models;
+﻿using LaptopMart.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 
-namespace LaptopMart.ApplicationDbContext
+namespace LaptopMart.ApplicationDb
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
     {
@@ -35,6 +35,11 @@ namespace LaptopMart.ApplicationDbContext
             modelBuilder.Entity<Product>().HasRequired<Supplier>(p => p.Supplier)
                 .WithMany(s => s.Products)
                 .HasForeignKey<int>(p => p.SupplierId);
+
+            modelBuilder.Entity<Product>().Property(p => p.Name).IsRequired().HasMaxLength(255);
+            modelBuilder.Entity<Category>().Property(p => p.Name).IsRequired().HasMaxLength(255);
+            modelBuilder.Entity<Supplier>().Property(p => p.Name).IsRequired().HasMaxLength(255);
+            
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,9 +1,9 @@
-﻿using LaptopMart.ApplicationDbContext;
+﻿using LaptopMart.ApplicationDb;
 using LaptopMart.Contracts;
 using System.Collections.Generic;
 using System.Data.Entity;
 
-namespace DAL.Implementations
+namespace LaptopMart.Implementations
 {
     public class Repository<T> : IRepository<T> where T : class
     {

@@ -1,4 +1,5 @@
-﻿using LaptopMart.Models;
+﻿using LaptopMart.ApplicationDb;
+using LaptopMart.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
@@ -17,7 +18,7 @@ namespace LaptopMart
 
         private void CreateRolesandUsers()
         {
-            ApplicationDbContext.ApplicationDbContext context = new ApplicationDbContext.ApplicationDbContext();
+            ApplicationDbContext context = new ApplicationDbContext();
 
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
