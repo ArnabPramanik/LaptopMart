@@ -1,17 +1,17 @@
-using System;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Unity;
-using Microsoft.AspNet.Identity;
-using LaptopMart.Models;
 using LaptopMart.ApplicationDb;
+using LaptopMart.Contracts;
 using LaptopMart.Controllers;
+using LaptopMart.Implementations;
+using LaptopMart.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security;
+using System;
+using System.Data.Entity;
+using System.Web;
+using Unity;
 using Unity.Injection;
 using Unity.Lifetime;
-using LaptopMart.Contracts;
-using LaptopMart.Implementations;
-using System.Data.Entity;
-using Microsoft.Owin.Security;
-using System.Web;
 
 namespace LaptopMart
 {
@@ -71,6 +71,8 @@ namespace LaptopMart
             container.RegisterType<IUnitOfWork, UnitOfWork>();
 
             
+
+
 
 
         }

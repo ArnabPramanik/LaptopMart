@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "Suppliers";
+
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ActionLink("Create new product","ShowFormProduct","Supplier",new{@class = "btn btn-primary"})
+<table id="products" class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            var table = $("#products").DataTable({
+                ajax: {
+                    url: "/api/supplier/GetProducts",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "Id"
+                    },
+                    {
+                        data: "Name"
+                    },
+                    {
+                        data: "Description"
+                    },
+                    {
+                        data: "Id",
+                        render: function (data) {
+                            return "<button class='btn btn-default js-delete' data-product-id=" + data + ">Delete</button>";
+                        }
+                    }
+
+                ]
+            });
+            $("#products").on("click", ".js-delete", function () {
+                var button = $(this);
+
+                bootbox.confirm("Are you sure you want to delete this product?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/supplier/DeleteProduct/" + button.attr("data-product-id"),
+                            method: "DELETE",
+                            success: function () {
+                                
+                                table.row(button.parents("tr")).remove().draw();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+
+
+
+    </script>
+}

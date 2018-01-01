@@ -1,6 +1,8 @@
 ﻿using LaptopMart.ApplicationDb;
 using LaptopMart.Contracts;
 using LaptopMart.Models;
+using System;
+using System.Collections;
 
 namespace LaptopMart.Implementations
 {
@@ -11,6 +13,8 @@ namespace LaptopMart.Implementations
 
 
         private readonly ApplicationDbContext _context;
+
+        private Hashtable _repositories;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -26,7 +30,26 @@ namespace LaptopMart.Implementations
         {
             _context.SaveChanges();
         }
-/*
+        /*
+                public IRepository<TEntity> Repository<TEntity>() where TEntity : class
+                {
+                    if (_repositories == null)
+                        _repositories = new Hashtable();
+
+                    var type = typeof(TEntity).Name;
+
+                    if (_repositories.ContainsKey(type)) return (IRepository<TEntity>)_repositories[type];
+
+                    var repositoryType = typeof(Repository<>);
+
+                    var repositoryInstance =
+                        Activator.CreateInstance(repositoryType
+                            .MakeGenericType(typeof(TEntity)), _context);
+
+                    _repositories.Add(type, repositoryInstance);
+
+                    return (IRepository<TEntity>)_repositories[type];
+                }*/
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class
         {
             if (_repositories == null)
@@ -45,7 +68,7 @@ namespace LaptopMart.Implementations
             _repositories.Add(type, repositoryInstance);
 
             return (IRepository<TEntity>)_repositories[type];
-        }*/
+        }
 
 
     }

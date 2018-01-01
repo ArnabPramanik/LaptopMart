@@ -1,5 +1,6 @@
 ﻿using LaptopMart.ApplicationDb;
 using LaptopMart.Models;
+using LaptopMart.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -138,10 +139,44 @@ namespace LaptopMart.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            ViewBag.Name = context.Roles.Where(u => !u.Name.Contains("SuperAdmin"))
+            ViewBag.Name = context.Roles.Where(u => !u.Name.Contains(Roles.RoleAdmin))
                 .ToList();
+            var viewModel = new RegisterChoiceViewModel();
+            
+                
+        
            
-            return View();
+            return View("RegisterChoice",viewModel);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChooseForm(RegisterChoiceViewModel registerChoiceViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Name = context.Roles.Where(u => !u.Name.Contains(Roles.RoleAdmin))
+                    .ToList();
+                registerChoiceViewModel = new RegisterChoiceViewModel();
+                return View("RegisterChoice", registerChoiceViewModel);
+            }
+
+            if (registerChoiceViewModel.UserRole.Equals(Roles.RoleSupplier))
+            {
+                return View("RegisterFormSupplier", new RegisterSupplierViewModel()
+                {
+                    UserRole = registerChoiceViewModel.UserRole
+
+                });
+            }
+
+            return View("RegisterFormUser", new RegisterUserViewModel()
+            {
+                UserRole = registerChoiceViewModel.UserRole
+
+
+            });
         }
 
         //
@@ -149,15 +184,56 @@ namespace LaptopMart.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> RegisterSupplier(RegisterSupplierViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var user = new ApplicationUser { UserName = viewModel.Email, Email = viewModel.Email, Name = viewModel.Name };
+                
+                var result = await UserManager.CreateAsync(user, viewModel.Password);
+
+
+                    if (result.Succeeded)
+                    {
+                        await this.UserManager.AddToRoleAsync(user.Id, viewModel.UserRole);
+                        Supplier supplier = new Supplier();
+                        supplier.Name = viewModel.Name;
+                        supplier.Description = viewModel.Description;
+                        context.SupplierTable.Add(supplier);
+                        context.SaveChanges();
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                        // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                        // Send an email with this link
+                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                    AddErrors(result);
+              
+            }
+
+            // If we got this far, something failed, redisplay form
+            
+            return View("RegisterFormSupplier",viewModel);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RegisterUser(RegisterUserViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { UserName = viewModel.Email, Email = viewModel.Email , Name = viewModel.Name };
+                var result = await UserManager.CreateAsync(user, viewModel.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -165,16 +241,15 @@ namespace LaptopMart.Controllers
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    await this.UserManager.AddToRoleAsync(user.Id,model.UserRole);
+                    await this.UserManager.AddToRoleAsync(user.Id, viewModel.UserRole);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
-            ViewBag.Name = context.Roles.Where(u => !u.Name.Contains("SuperAdmin"))
-                .ToList();
-            return View(model);
+            
+            return View("RegisterFormUser", viewModel);
         }
 
         //
@@ -486,5 +561,7 @@ namespace LaptopMart.Controllers
             }
         }
         #endregion
+
+        
     }
 }

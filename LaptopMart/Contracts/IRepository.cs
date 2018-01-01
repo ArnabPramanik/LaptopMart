@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LaptopMart.Models;
+using System.Collections.Generic;
 
 namespace LaptopMart.Contracts
 {
@@ -16,8 +17,13 @@ namespace LaptopMart.Contracts
         void Update(TEntity t);
 
 
-        void Delete(int id);
+        TEntity Delete(int id);
 
+        ApplicationUser DeleteSupplierByAdmin(int supplierId);
+
+        IEnumerable<Product> ReadAllProductsBySupplier(string supplierName);
+
+        Product ReadProductBySupplier(string supplierName, int productId);
 
 
     }

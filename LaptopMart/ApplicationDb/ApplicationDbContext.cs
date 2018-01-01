@@ -1,4 +1,5 @@
-﻿using LaptopMart.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using LaptopMart.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
 
@@ -34,12 +35,17 @@ namespace LaptopMart.ApplicationDb
 
             modelBuilder.Entity<Product>().HasRequired<Supplier>(p => p.Supplier)
                 .WithMany(s => s.Products)
-                .HasForeignKey<int>(p => p.SupplierId);
+                .HasForeignKey<string>(p => p.SupplierName);
 
             modelBuilder.Entity<Product>().Property(p => p.Name).IsRequired().HasMaxLength(255);
             modelBuilder.Entity<Category>().Property(p => p.Name).IsRequired().HasMaxLength(255);
+            modelBuilder.Entity<Category>().Property(p => p.Description).HasMaxLength(300);
             modelBuilder.Entity<Supplier>().Property(p => p.Name).IsRequired().HasMaxLength(255);
-            
+            modelBuilder.Entity<Supplier>().Property(p => p.Description).IsRequired().HasMaxLength(300);
+            modelBuilder.Entity<Supplier>().HasKey(k => k.Name);
+            modelBuilder.Entity<Supplier>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<ApplicationUser>().Property(p => p.Name).IsRequired().HasMaxLength(50);
 
             base.OnModelCreating(modelBuilder);
         }

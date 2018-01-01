@@ -9,6 +9,6 @@ namespace LaptopMart.Contracts
         IRepository<Supplier> SupplierRepository { get; }
 
         void Complete();
-        //IRepository<TEntity> Repository<TEntity>() where TEntity : class;
+        IRepository<TEntity> Repository<TEntity>() where TEntity : class;
     }
 }

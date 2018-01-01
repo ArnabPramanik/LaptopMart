@@ -23,8 +23,8 @@ namespace LaptopMart
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
-            string superadmin = "SuperAdmin";
-            string admin = "Admin";
+            string superadmin = "Admin";
+            string admin = "Supplier";
             string user = "User";
             // In Startup iam creating first Admin Role and creating a default Admin User    
             if (!roleManager.RoleExists(superadmin))
@@ -38,10 +38,10 @@ namespace LaptopMart
                 //Here we create a Admin super user who will maintain the website                  
 
                 var tempuser = new ApplicationUser();
-                tempuser.UserName = "Arnab";
-                tempuser.Email = "arnab_pmk@yahoo.com";
+                tempuser.UserName = "admin@yahoo.com";
+                tempuser.Email = "admin@yahoo.com";
 
-                string userPWD = "1234567";
+                string userPWD = "1UniVersiTy$$";
 
                 var chkUser = UserManager.Create(tempuser, userPWD);
 
