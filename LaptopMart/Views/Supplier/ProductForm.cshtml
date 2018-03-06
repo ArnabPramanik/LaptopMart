@@ -8,13 +8,14 @@
 <h2>title</h2>
 
 
-@using (Html.BeginForm("SaveProduct", "Supplier", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("SaveProduct", "Supplier", FormMethod.Post, new { @class = "form-horizontal", role = "form", encType = "multipart/form-data", id = "js-form" }))
 {
     @Html.AntiForgeryToken()
     <h4>Create a new product.</h4>
     <hr />
     @Html.ValidationSummary(true, "Fix the following mistakes", new { @class = "text-danger" })
     @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.Image)
     <div class="form-group">
         @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
@@ -48,11 +49,50 @@
 
 
     <div class="form-group">
-        @Html.LabelFor(m => m.CategoryId,new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(m => m.CategoryId,new SelectList(Model.Categories, "Id", "Name"),"Choose a category", new {@class = "form-control"})
+        @Html.LabelFor(m => m.CategoryIds, new { @class = "col-md-2 control-label" })
+
+
+        @if (Model.CategoryNames.Count != 0)
+    {
+        <table id="js-table">
+
+            @foreach (string categoryName in Model.CategoryNames)
+        {
+
+            <tr><td>@categoryName</td></tr>
+
+    }
+            <tr><td> <a class="js-add-row1 btn btn-danger">Add new row</a></td></tr>
+
+
+        </table>
+}
+else
+{
+
+        <div class="col-md-10" id="js-clone">
+            @Html.DropDownListFor(m => m.CategoryIds, new SelectList(Model.CategoriesDropDownList, "Id", "Name"), "Choose a category", new { @class = "form-control" })
+            <a class="js-add-row2 btn btn-danger">Add new row</a>
         </div>
-        @Html.ValidationMessageFor(m => m.CategoryId)
+    @Html.ValidationMessageFor(m => m.CategoryIds)
+    
+
+}
+
+    </div>
+
+
+
+
+
+
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Image, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            <input type="file" id="file" name="file" class="form-control" />
+        </div>
+        @Html.ValidationMessageFor(m => m.Image)
     </div>
 
     <div class="form-group">
@@ -60,4 +100,40 @@
             <input type="submit" class="btn btn-default" value="Save" />
         </div>
     </div>
+
+   
+}
+
+
+@section scripts
+{
+    <script>
+        function deleteelement(buttonId) {
+            console.log(buttonId);
+            $("#" + buttonId).remove();
+        }
+
+        $(document).ready(function () {
+            var counter = 0;
+            $(".js-add-row2").click(function () {
+                $('#js-clone').append('<div class="form-group" id = ' + counter + '>' + $('#template').html() + '<button type="button" onClick= "deleteelement(' + counter + ')" class="btn btn-danger" id = "' + counter + '">Delete</button>' + '</div>');
+
+            });
+
+            $(".js-add-row1").click(function (e) { //on add input button click
+                counter++;
+                $("#js-table").append('<div class="form-group" id = ' + counter + '>' + $('#template').html() + '<button type="button" onClick= "deleteelement(' + counter + ')" class="btn btn-danger" id = "' + counter + '">Delete</button>' + '</div>');
+            });
+        });
+
+    </script>
+
+    <script id="template" type="text/template">
+
+
+
+        @Html.DropDownListFor(m => m.CategoryIds, new SelectList(Model.CategoriesDropDownList, "Id", "Name"), "Choose a category", new { @class = "form-control" })
+
+    </script>
+
 }

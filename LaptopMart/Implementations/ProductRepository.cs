@@ -1,65 +1,67 @@
 ﻿using LaptopMart.ApplicationDb;
 using LaptopMart.Contracts;
 using LaptopMart.Models;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
 namespace LaptopMart.Implementations
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class ProductRepository : IProductRepository
     {
         private readonly ApplicationDbContext _context;
-        
 
-        public Repository(ApplicationDbContext context)
+
+        public ProductRepository(ApplicationDbContext context)
         {
             _context = context;
 
         }
-        public void Create(T t)
+        public void Create(Product product)
         {
-            _context.Set<T>().Add(t);
+            _context.ProductTable.Add(product);
         }
 
-        public IEnumerable<T> ReadAll()
+        public IEnumerable<Product> ReadAll()
         {
-            return _context.Set<T>().ToList();
+            return _context.ProductTable.ToList();
         }
 
-        public T Read(int id)
+        public Product Read(int id)
         {
-           return _context.Set<T>().Find(id);
+            return _context.ProductTable.Include(p => p.Supplier).SingleOrDefault(p  => p.Id == id);
         }
 
-        public void Update(T t)
+        public Product ReadLast()
         {
-            _context.Set<T>().Attach(t);
-            _context.Entry(t).State = EntityState.Modified;
+            return _context.ProductTable.ToList().LastOrDefault();
         }
 
-        public T Delete(int id)
+        public void Update(Product product)
         {
-            var t = Read(id);
-            if (t == null)
+            _context.ProductTable.Attach(product);
+            
+            _context.Entry(product).State = EntityState.Modified;
+            
+        }
+
+        public Product Delete(int id)
+        {
+            var product = Read(id);
+            if (product == null)
             {
                 return null;
             }
-            if (_context.Entry(t).State == EntityState.Detached)
-                _context.Set<T>().Attach(t);
+            if (_context.Entry(product).State == EntityState.Detached)
+                _context.ProductTable.Attach(product);
 
-            _context.Set<T>().Remove(t);
-            return t;
+            _context.ProductTable.Remove(product);
+            return product;
 
         }
 
         public IEnumerable<Product> ReadAllProductsBySupplier(string supplierName)
         {
-            if (typeof(T) != typeof(Product))
-            {
-                throw new Exception("T must be of type Product");
-            }
 
             var productsFromSupplier = _context.ProductTable.Where(p => p.SupplierName.Equals(supplierName));
             return productsFromSupplier;
@@ -67,10 +69,7 @@ namespace LaptopMart.Implementations
 
         public Product ReadProductBySupplier(string supplierName, int productId)
         {
-            if (typeof(T) != typeof(Product))
-            {
-                throw new Exception("T must be of type Product");
-            }
+
             var productFromSupplier = _context.ProductTable.SingleOrDefault(p => p.SupplierName.Equals(supplierName) && p.Id == productId);
             return productFromSupplier;
 
@@ -78,13 +77,10 @@ namespace LaptopMart.Implementations
 
         public ApplicationUser DeleteSupplierByAdmin(int supplierId)
         {
-           // var um = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            if (typeof(T) != typeof(Supplier))
-            {
-                throw new Exception("T must be of type supplier");
-            }
+            // var um = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-            var supplierToBeSuspended = _context.Set<Supplier>().SingleOrDefault(s => s.Id == supplierId);
+
+            var supplierToBeSuspended = _context.Set<Product>().SingleOrDefault(s => s.Id == supplierId);
             if (supplierToBeSuspended == null)
             {
                 return null;
@@ -96,10 +92,11 @@ namespace LaptopMart.Implementations
             }
 
             _context.Users.Remove(userSupplier);
-            _context.SupplierTable.Remove(supplierToBeSuspended);
-            
+            _context.ProductTable.Remove(supplierToBeSuspended);
+
             return userSupplier;
 
         }
+
     }
 }

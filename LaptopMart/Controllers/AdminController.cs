@@ -25,10 +25,16 @@ namespace LaptopMart.Controllers
 
         public ActionResult ShowFormCategory()
         {
-            
-           
-               
-            CategoryFormViewModel viewModel = new CategoryFormViewModel();
+
+
+
+            CategoryFormViewModel viewModel = new CategoryFormViewModel()
+            {
+                ExistingCategories = _unitOfWork.CategoryRepository.ReadAll()
+            };
+
+
+
             
             
 
@@ -41,6 +47,7 @@ namespace LaptopMart.Controllers
         {
             if (!ModelState.IsValid)
             {
+                viewModel.ExistingCategories = _unitOfWork.CategoryRepository.ReadAll();
                 return View("CategoryForm", viewModel);
             }
 
@@ -48,11 +55,11 @@ namespace LaptopMart.Controllers
             category.SetObject(viewModel);
             if (category.Id == 0)
             {
-                _unitOfWork.Repository<Category>().Create(category);
+                _unitOfWork.CategoryRepository.Create(category);
             }
             else
             {
-                _unitOfWork.Repository<Category>().Update(category);
+                _unitOfWork.CategoryRepository.Update(category);
             }
 
             _unitOfWork.Complete();
@@ -62,14 +69,14 @@ namespace LaptopMart.Controllers
 
         public ActionResult EditCategory(int id)
         {
-            var categoryInDb = _unitOfWork.Repository<Category>().Read(id);
+            var categoryInDb = _unitOfWork.CategoryRepository.Read(id);
             if (categoryInDb == null)
             {
                 return HttpNotFound();
             }
-
-
-            return View("CategoryForm", Mapper.Map<Category, CategoryFormViewModel>(categoryInDb));
+            CategoryFormViewModel viewModel = Mapper.Map<Category, CategoryFormViewModel>(categoryInDb);
+            viewModel.ExistingCategories = _unitOfWork.CategoryRepository.ReadAll();
+            return View("CategoryForm", viewModel);
 
         }
 

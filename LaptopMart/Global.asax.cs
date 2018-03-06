@@ -18,5 +18,7 @@ namespace LaptopMart
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+       
     }
 }

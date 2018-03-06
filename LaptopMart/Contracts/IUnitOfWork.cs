@@ -1,14 +1,15 @@
-﻿using LaptopMart.Models;
-
-namespace LaptopMart.Contracts
+﻿namespace LaptopMart.Contracts
 {
     public interface IUnitOfWork
     {
-        IRepository<Product> ProductRepository { get; }
-        IRepository<Category> CategoryRepository { get; }
-        IRepository<Supplier> SupplierRepository { get; }
+        IProductRepository ProductRepository { get; }
+        ICategoryRepository CategoryRepository { get; }
+        ISupplierRepository SupplierRepository { get; }
+        IApplicationUserRepository ApplicationUserRepository { get; }
+        ICartRepository CartRepository { get; }
+        ICartItemRepository CartItemRepository { get; }
 
         void Complete();
-        IRepository<TEntity> Repository<TEntity>() where TEntity : class;
+        
     }
 }

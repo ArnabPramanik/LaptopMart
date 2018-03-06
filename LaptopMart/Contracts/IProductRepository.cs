@@ -3,28 +3,16 @@ using System.Collections.Generic;
 
 namespace LaptopMart.Contracts
 {
-    public interface IRepository<TEntity> where TEntity : class
+    public interface IProductRepository
     {
-        void Create(TEntity t);
-
-
-        IEnumerable<TEntity> ReadAll();
-
-
-        TEntity Read(int id);
-
-
-        void Update(TEntity t);
-
-
-        TEntity Delete(int id);
-
+        void Create(Product product);
+        Product Delete(int id);
         ApplicationUser DeleteSupplierByAdmin(int supplierId);
-
+        Product Read(int id);
+        Product ReadLast();
+        IEnumerable<Product> ReadAll();
         IEnumerable<Product> ReadAllProductsBySupplier(string supplierName);
-
         Product ReadProductBySupplier(string supplierName, int productId);
-
-
+        void Update(Product product);
     }
 }

@@ -1,8 +1,93 @@
-﻿ 
+﻿@using LaptopMart.Models
+@using LaptopMart.ViewModels
+@model LaptopMart.ViewModels.ProductsAndCartItemsViewModel
+
 
 @{
-    ViewBag.Title = "User Index";
-    Layout = "_Layout";
+                
+
+                ViewBag.Title = "User Index";
+
 }
 
 <h2>title</h2>
+
+
+@foreach (Product product in Model.Products)
+{
+    <div class="inline">
+        <div  class="A" div-product-id ="@product.Id">
+            <div class="card">
+                <div class="card-head">
+                    <img src="~/Content/ProductImages/@product.Image" alt="product-image" class="card-product-image">
+                </div>
+                <div class="card-body">
+                    <div class="product-details">
+                        <span class="product-title">@product.Name</span>
+                        <span class="product-price">$<b>@product.Price</b></span>
+                    </div>
+                    <div>
+                        @{bool belongs = false;}
+                        @foreach (CartItemViewModel cartItem in Model.CartItems)
+    {
+        if (cartItem.ProductId == product.Id)
+        {
+            belongs = true;
+            break;
+        }
+    }
+                        @if(belongs == true)
+                        {
+                        <div class="btn-sm btn-primary js-add-to-cart" data-product-id="@product.Id" >In Cart</div>
+                        }
+                        else
+                        {
+                        <div class="btn-sm btn-primary js-add-to-cart" data-product-id="@product.Id">Add to Cart</div>
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            
+            $(".A").on("click", function () {
+                window.location.href = "/user/ProductDetails/" + $(this).attr("div-product-id"); 
+  
+            });
+            $(".js-add-to-cart").on("click",
+                function () {
+                    var button = $(this);
+                    
+                    $.ajax({
+                        url: "/api/user/AddToCart/" + button.attr("data-product-id"),
+                        method: "GET",
+                        success: function () {
+                           
+                            window.setTimeout(function () {
+                                bootbox.hideAll();
+                            }, 1000);
+
+                            bootbox.alert("This has been added to cart");
+                            button.text("In Cart")
+                            
+                        }
+                    });
+                    event.stopImmediatePropagation();
+                });
+
+
+        });
+
+
+    </script>
+}

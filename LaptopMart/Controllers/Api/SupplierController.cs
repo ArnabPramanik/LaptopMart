@@ -2,6 +2,7 @@
 using LaptopMart.Contracts;
 using LaptopMart.Dtos;
 using LaptopMart.Models;
+using Microsoft.AspNet.Identity;
 using System.Linq;
 using System.Web.Http;
 
@@ -20,8 +21,8 @@ namespace LaptopMart.Controllers.Api
         [HttpGet]
         public IHttpActionResult GetProducts()
         {
-            string supplierName = User.Identity.Name;
-            var productsInDb = _unitOfWork.Repository<Product>().ReadAllProductsBySupplier(supplierName);
+            string supplierName = _unitOfWork.ApplicationUserRepository.Read(User.Identity.GetUserId()).Name;
+            var productsInDb = _unitOfWork.ProductRepository.ReadAllProductsBySupplier(supplierName);
             var productsDto = productsInDb.Select(Mapper.Map<Product,ProductDto>);
             return Ok(productsDto);
 
@@ -30,13 +31,14 @@ namespace LaptopMart.Controllers.Api
         [HttpDelete]
         public IHttpActionResult DeleteProduct(int id)
         {
-            var productInDb = _unitOfWork.Repository<Product>().ReadProductBySupplier(User.Identity.Name, id);
+            var productInDb = _unitOfWork.ProductRepository.ReadProductBySupplier(_unitOfWork.ApplicationUserRepository.Read(User.Identity.GetUserId()).Name, id);
             if (productInDb == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.Repository<Product>().Delete(productInDb.Id);
+            _unitOfWork.ProductRepository.Delete(productInDb.Id);
+            _unitOfWork.Complete();
             return Ok();
         } 
     }

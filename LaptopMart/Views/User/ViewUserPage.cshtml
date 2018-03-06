@@ -1,0 +1,19 @@
+﻿@model LaptopMart.Models.ApplicationUser
+@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.Owin;
+
+@{
+    ViewBag.Title = "ViewUserPage";
+}
+
+<h2>ViewUserPage</h2>
+
+<h2>@Model.Name</h2>
+
+
+@if (Request.GetOwinContext().GetUserManager<ApplicationUserManager>().IsInRole(User.Identity.GetUserId(), LaptopMart.Roles.RoleUser))
+{
+    <a class="btn btn-danger" href="/user/ShowBecomeASupplierForm">Become a Supplier</a>
+}
+
+

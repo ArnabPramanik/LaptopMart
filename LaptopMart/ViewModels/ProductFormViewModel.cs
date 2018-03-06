@@ -7,6 +7,10 @@ namespace LaptopMart.ViewModels
 {
     public class ProductFormViewModel
     {
+        public ProductFormViewModel()
+        {
+            CategoryIds = new List<int>();
+        }
 
         public int Id { get; set; }
 
@@ -24,8 +28,14 @@ namespace LaptopMart.ViewModels
         public string Description { get; set; }
 
         [Required]
-        public string CategoryId { get; set; }
+        [Display(Name="Category")]
+        public ICollection<int> CategoryIds { get; set; }
 
-        public IEnumerable<Category> Categories { get; set; }
+        public ICollection<string> CategoryNames { get; set; }
+        
+        public string Image { get; set; }
+
+        public IEnumerable<Category> CategoriesDropDownList { get; set; }
+       
     }
 }

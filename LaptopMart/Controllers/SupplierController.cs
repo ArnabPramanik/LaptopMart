@@ -2,7 +2,13 @@
 using LaptopMart.Contracts;
 using LaptopMart.Models;
 using LaptopMart.ViewModels;
-using System.Diagnostics;
+using Microsoft.AspNet.Identity;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Web;
 using System.Web.Mvc;
 
 namespace LaptopMart.Controllers
@@ -27,7 +33,10 @@ namespace LaptopMart.Controllers
         {
             var viewModel = new ProductFormViewModel()
             {
-                Categories = _unitOfWork.Repository<Category>().ReadAll()
+                CategoriesDropDownList = _unitOfWork.CategoryRepository.ReadAll(),
+                CategoryNames = new List<string>()
+               
+            
              
             };
 
@@ -36,23 +45,89 @@ namespace LaptopMart.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SaveProduct(ProductFormViewModel viewModel)
+        public ActionResult SaveProduct(ProductFormViewModel viewModel, HttpPostedFileBase file)
         {
+            if (file == null && viewModel.Id == 0)
+            {
+                ModelState.AddModelError("Image", "Please upload file");
+            }
+            else if (file != null)
+            {
+                if (file.ContentLength > 1 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("Image", "Image should be less than or equal to 1MB");
+                }
+                else
+                {
+
+
+                    try
+                    {
+                        using (var img = Image.FromStream(file.InputStream))
+                        {
+                            if (!img.RawFormat.Equals(ImageFormat.Png) && !img.RawFormat.Equals(ImageFormat.Jpeg))
+                            {
+                                ModelState.AddModelError("Image", "Image should be .png or .jpg");
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
             {
+                viewModel.CategoriesDropDownList = _unitOfWork.CategoryRepository.ReadAll();
                 return View("ProductForm", viewModel);
             }
+            ISet<Category> categories = new HashSet<Category>();
+
+            foreach (int categoryId in viewModel.CategoryIds)
+            { 
+
+                categories.Add(_unitOfWork.CategoryRepository.Read(categoryId));
+            }
+
+
+            Product product = Mapper.Map<ProductFormViewModel, Product>(viewModel);
+            var user = _unitOfWork.ApplicationUserRepository.Read(User.Identity.GetUserId());
+            product.SupplierName = user.Name;
+            product.Categories = categories;
+            
+            
 
             if (viewModel.Id == 0)
             {
-                Product product = Mapper.Map<ProductFormViewModel, Product>(viewModel);
-               
-                Debug.WriteLine(product.SupplierName);
-                _unitOfWork.Repository<Product>().Create(product);
+                if (file != null)
+                {
+                    var prevProduct = _unitOfWork.ProductRepository.ReadLast();
+                    if (prevProduct == null)
+                    {
+                        product.Image = "1" + Path.GetExtension(file.FileName);
+                    }
+                    else
+                    {
+                        product.Image = (prevProduct.Id + 1) + Path.GetExtension(file.FileName);
+                    }
+                   
+                    file.SaveAs(Server.MapPath("//Content//ProductImages//") + product.Image);
+                }
+
+                _unitOfWork.ProductRepository.Create(product);
             }
             else
             {
-                _unitOfWork.Repository<Product>().Update(Mapper.Map<ProductFormViewModel, Product>(viewModel));
+              
+                if (file != null)
+                {
+                    product.Image = product.Id + Path.GetExtension(file.FileName);
+                    file.SaveAs(Server.MapPath("//Content//ProductImages//") + product.Image);
+                }
+
+                Product productInDb = _unitOfWork.ProductRepository.Read(product.Id);
+                productInDb.Update(product);
             }
 
             _unitOfWork.Complete();
@@ -63,14 +138,26 @@ namespace LaptopMart.Controllers
 
         public ActionResult EditProduct(int id)
         {
-            var supplierName = User.Identity.Name;
+            var supplierName = _unitOfWork.ApplicationUserRepository.Read(User.Identity.GetUserId()).Name;
 
-            var productInDb = _unitOfWork.Repository<Product>().ReadProductBySupplier(supplierName,id);
+            var productInDb = _unitOfWork.ProductRepository.ReadProductBySupplier(supplierName,id);
             if (productInDb == null)
             {
                 return HttpNotFound();
             }
-            return View("ProductForm", Mapper.Map<Product, ProductFormViewModel>(productInDb));
+
+            ProductFormViewModel viewModel = Mapper.Map<Product, ProductFormViewModel>(productInDb);
+            
+            viewModel.CategoriesDropDownList = _unitOfWork.CategoryRepository.ReadAll();
+            viewModel.CategoryIds = new List<int>();
+            viewModel.CategoryNames = new List<string>();
+            foreach(Category category in productInDb.Categories)
+            {
+               
+                viewModel.CategoryIds.Add(category.Id);
+                viewModel.CategoryNames.Add(category.Name);
+            }
+            return View("ProductForm",viewModel);
         }
 
 

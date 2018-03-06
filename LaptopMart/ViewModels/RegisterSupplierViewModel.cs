@@ -29,10 +29,15 @@ namespace LaptopMart.ViewModels
         [Required]
         [Display(Name = "Brand Name")]
         [MaxLength(50)]
-        public string Name { get; set; }
+        public string BrandName { get; set; }
 
+        [Required]
+        [Display(Name = "Your Name")]
+        [MaxLength(50)]
+        public string Name { get; set; }
         
         [Display(Name = "Brand Description")]
+        [MaxLength(300)]
         public string Description { get; set; }
     }
 }

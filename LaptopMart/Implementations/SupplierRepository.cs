@@ -1,13 +1,13 @@
 ﻿using LaptopMart.ApplicationDb;
 using LaptopMart.Models;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using LaptopMart.Contracts;
 
 namespace LaptopMart.Implementations
 {
-    public class SupplierRepository
+    public class SupplierRepository : ISupplierRepository
     {
 
         private readonly ApplicationDbContext _context;
@@ -54,37 +54,13 @@ namespace LaptopMart.Implementations
 
         }
 
-        public IEnumerable<Product> ReadAllProductsBySupplier(string supplierName)
-        {
-            if (typeof(T) != typeof(Product))
-            {
-                throw new Exception("T must be of type Product");
-            }
-
-            var productsFromSupplier = _context.ProductTable.Where(p => p.SupplierName.Equals(supplierName));
-            return productsFromSupplier;
-        }
-
-        public Product ReadProductBySupplier(string supplierName, int productId)
-        {
-            if (typeof(T) != typeof(Product))
-            {
-                throw new Exception("T must be of type Product");
-            }
-            var productFromSupplier = _context.ProductTable.SingleOrDefault(p => p.SupplierName.Equals(supplierName) && p.Id == productId);
-            return productFromSupplier;
-
-        }
 
         public ApplicationUser DeleteSupplierByAdmin(int supplierId)
         {
             // var um = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            if (typeof(T) != typeof(Supplier))
-            {
-                throw new Exception("T must be of type supplier");
-            }
+           
 
-            var supplierToBeSuspended = _context.Set<Supplier>().SingleOrDefault(s => s.Id == supplierId);
+            var supplierToBeSuspended = _context.SupplierTable.SingleOrDefault(s => s.Id == supplierId);
             if (supplierToBeSuspended == null)
             {
                 return null;

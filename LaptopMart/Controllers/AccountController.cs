@@ -1,5 +1,6 @@
 ﻿using LaptopMart.ApplicationDb;
 using LaptopMart.Models;
+using LaptopMart.Services;
 using LaptopMart.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -17,9 +18,11 @@ namespace LaptopMart.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private ApplicationDbContext context;
-        public AccountController()
+        private ICartService _cartService;
+        public AccountController(ICartService cartService)
         {
             context = new ApplicationDbContext();
+            _cartService = cartService;
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -79,6 +82,10 @@ namespace LaptopMart.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    string userId = SignInManager
+                        .AuthenticationManager
+                        .AuthenticationResponseGrant.Identity.GetUserId();
+                    _cartService.Transfer(HttpContext,userId);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -197,7 +204,7 @@ namespace LaptopMart.Controllers
                     {
                         await this.UserManager.AddToRoleAsync(user.Id, viewModel.UserRole);
                         Supplier supplier = new Supplier();
-                        supplier.Name = viewModel.Name;
+                        supplier.Name = viewModel.BrandName;
                         supplier.Description = viewModel.Description;
                         context.SupplierTable.Add(supplier);
                         context.SaveChanges();
@@ -233,6 +240,7 @@ namespace LaptopMart.Controllers
                 var result = await UserManager.CreateAsync(user, viewModel.Password);
                 if (result.Succeeded)
                 {
+                    await this.UserManager.AddToRoleAsync(user.Id, viewModel.UserRole);
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771

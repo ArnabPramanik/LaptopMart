@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LaptopMart.Models;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace LaptopMart.ViewModels
 {
@@ -12,6 +14,12 @@ namespace LaptopMart.ViewModels
 
         [MaxLength(300)]
         public string Description { get; set; }
+
+        [Display(Name = "Parent")]
+        public int ParentId { get; set; }
+
+        
+        public IEnumerable<Category> ExistingCategories { get; set; }
 
     }
 }

@@ -222,16 +222,28 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\UnityMvcActivator.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Contracts\IRepository.cs" />
+    <Compile Include="Contracts\ICartRepository.cs" />
     <Compile Include="Contracts\IUnitOfWork.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\Api\AdminController.cs" />
+    <Compile Include="Controllers\Api\UserController.cs" />
+    <Compile Include="Dtos\CartInfoDto.cs" />
     <Compile Include="Dtos\ProductDto.cs" />
     <Compile Include="Controllers\Api\SupplierController.cs" />
     <Compile Include="Controllers\SupplierController.cs" />
     <Compile Include="Dtos\CategoryDto.cs" />
     <Compile Include="Dtos\SupplierDto.cs" />
+    <Compile Include="Implementations\ApplicationUserRepository.cs" />
+    <Compile Include="Implementations\CartItemRepository.cs" />
+    <Compile Include="Implementations\CartRepository.cs" />
+    <Compile Include="Implementations\CategoryRepository.cs" />
+    <Compile Include="Contracts\ICategoryRepository.cs" />
+    <Compile Include="Contracts\IProductRepository.cs" />
+    <Compile Include="Contracts\ISupplierRepository.cs" />
+    <Compile Include="Contracts\IApplicationUserRepository.cs" />
+    <Compile Include="Contracts\ICartItemRepository.cs" />
+    <Compile Include="Implementations\ProductRepository.cs" />
     <Compile Include="Implementations\SupplierRepository.cs" />
     <Compile Include="Migrations\201712222015240_AddedSomeFluentApi.cs" />
     <Compile Include="Migrations\201712222015240_AddedSomeFluentApi.Designer.cs">
@@ -253,11 +265,45 @@
     <Compile Include="Migrations\201712311447166_AddedDescriptionToProduct.Designer.cs">
       <DependentUpon>201712311447166_AddedDescriptionToProduct.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801041916301_AddedImage.cs" />
+    <Compile Include="Migrations\201801041916301_AddedImage.Designer.cs">
+      <DependentUpon>201801041916301_AddedImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801101431490_AddedCart.cs" />
+    <Compile Include="Migrations\201801101431490_AddedCart.Designer.cs">
+      <DependentUpon>201801101431490_AddedCart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801131233371_AddedUserIdToCart.cs" />
+    <Compile Include="Migrations\201801131233371_AddedUserIdToCart.Designer.cs">
+      <DependentUpon>201801131233371_AddedUserIdToCart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801131506529_MadeFKNotNull.cs" />
+    <Compile Include="Migrations\201801131506529_MadeFKNotNull.Designer.cs">
+      <DependentUpon>201801131506529_MadeFKNotNull.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801301431368_AddedParentId.cs" />
+    <Compile Include="Migrations\201801301431368_AddedParentId.Designer.cs">
+      <DependentUpon>201801301431368_AddedParentId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802020911452_ManyToMany.cs" />
+    <Compile Include="Migrations\201802020911452_ManyToMany.Designer.cs">
+      <DependentUpon>201802020911452_ManyToMany.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802051512126_AddedSupplierFlow.cs" />
+    <Compile Include="Migrations\201802051512126_AddedSupplierFlow.Designer.cs">
+      <DependentUpon>201802051512126_AddedSupplierFlow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Cart.cs" />
+    <Compile Include="Models\CartItem.cs" />
+    <Compile Include="Services\CartService.cs" />
+    <Compile Include="Services\ICartService.cs" />
+    <Compile Include="ViewModels\BecomeASupplierViewModel.cs" />
+    <Compile Include="ViewModels\CartItemViewModel.cs" />
     <Compile Include="ViewModels\CategoryFormViewModel.cs" />
     <Compile Include="ViewModels\ProductFormViewModel.cs" />
+    <Compile Include="ViewModels\ProductsAndCartItemsViewModel.cs" />
     <Compile Include="ViewModels\RegisterUserViewModel.cs" />
     <Compile Include="ViewModels\RegisterSupplierViewModel.cs" />
-    <Compile Include="Implementations\Repository.cs" />
     <Compile Include="Implementations\UnitOfWork.cs" />
     <Compile Include="Migrations\201712211305145_NotNullFields.cs" />
     <Compile Include="Migrations\201712211305145_NotNullFields.Designer.cs">
@@ -588,9 +634,15 @@
     <Content Include="Views\Admin\ShowSuppliers.cshtml" />
     <Content Include="Views\Supplier\ShowProducts.cshtml" />
     <Content Include="Views\Supplier\ProductForm.cshtml" />
+    <Content Include="Views\User\ProductDetails.cshtml" />
+    <Content Include="Views\User\ViewCart.cshtml" />
+    <Content Include="Views\User\ViewCategories.cshtml" />
+    <Content Include="Views\User\ViewUserPage.cshtml" />
+    <Content Include="Views\User\BecomeASupplierForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\ProductImages\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -626,6 +678,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712311447166_AddedDescriptionToProduct.resx">
       <DependentUpon>201712311447166_AddedDescriptionToProduct.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801041916301_AddedImage.resx">
+      <DependentUpon>201801041916301_AddedImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801101431490_AddedCart.resx">
+      <DependentUpon>201801101431490_AddedCart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801131233371_AddedUserIdToCart.resx">
+      <DependentUpon>201801131233371_AddedUserIdToCart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801131506529_MadeFKNotNull.resx">
+      <DependentUpon>201801131506529_MadeFKNotNull.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801301431368_AddedParentId.resx">
+      <DependentUpon>201801301431368_AddedParentId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802020911452_ManyToMany.resx">
+      <DependentUpon>201802020911452_ManyToMany.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802051512126_AddedSupplierFlow.resx">
+      <DependentUpon>201802051512126_AddedSupplierFlow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

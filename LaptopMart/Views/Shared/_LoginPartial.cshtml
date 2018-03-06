@@ -16,17 +16,17 @@
                     Options<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-
-                    @if (Request.GetOwinContext().GetUserManager<ApplicationUserManager>().IsInRole(User.Identity.GetUserId(),LaptopMart.Roles.RoleAdmin))
+                    <li><a class="dropdown-item" href="@Url.Action("ViewUserPage", "User")">My Page</a></li>
+                    @if (Request.GetOwinContext().GetUserManager<ApplicationUserManager>().IsInRole(User.Identity.GetUserId(), LaptopMart.Roles.RoleAdmin))
     {
-                    <li><a class="dropdown-item" href="@Url.Action("ShowCategories", "Admin")">Categories</a></li>
-                    <li><a class="dropdown-item" href="@Url.Action("ShowSuppliers", "Admin")">Suppliers</a></li>
-                    }
-                    @if (Request.GetOwinContext().GetUserManager<ApplicationUserManager>().IsInRole(User.Identity.GetUserId(),LaptopMart.Roles.RoleSupplier))
-                    {
-                        <li><a class="dropdown-item" href="@Url.Action("ShowProducts", "Supplier")">Products</a></li>
-                        
-                    }
+                <li><a class="dropdown-item" href="@Url.Action("ShowCategories", "Admin")">Categories</a></li>
+                <li><a class="dropdown-item" href="@Url.Action("ShowSuppliers", "Admin")">Suppliers</a></li>
+}
+                    @if (Request.GetOwinContext().GetUserManager<ApplicationUserManager>().IsInRole(User.Identity.GetUserId(), LaptopMart.Roles.RoleSupplier))
+    {
+                <li><a class="dropdown-item" href="@Url.Action("ShowProducts", "Supplier")">Products</a></li>
+
+}
                 </ul>
             </li>
         </ul>

@@ -14,11 +14,14 @@ namespace LaptopMart.Models
 
         public string Description { get; set; }
 
+        public int ParentId { get; set; }
+
         public void SetObject(CategoryFormViewModel viewModel)
         {
             Id = viewModel.Id;
             Name = viewModel.Name;
             Description = viewModel.Description;
+            ParentId = viewModel.ParentId;
         }
     }
 }

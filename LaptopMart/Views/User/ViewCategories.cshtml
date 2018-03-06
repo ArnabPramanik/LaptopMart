@@ -1,0 +1,13 @@
+﻿@model IEnumerable<LaptopMart.Models.Category>
+@using LaptopMart.Models
+
+@{
+    ViewBag.Title = "ViewCategories";
+}
+
+<h2>ViewCategories</h2>
+
+@foreach(Category category in Model)
+{
+    <p>@Html.ActionLink(category.Name,"ViewCategories","User",new { Id = category.Id},null)</p>
+}

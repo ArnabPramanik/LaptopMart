@@ -10,6 +10,7 @@ namespace LaptopMart.Models
     {
         
         public string Name { get; set; }
+        public string BrandName { get; set; }
 
        
 

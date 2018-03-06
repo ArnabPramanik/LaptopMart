@@ -15,7 +15,7 @@ namespace LaptopMart.App_Start
 
             var config2 = new MapperConfiguration(cfg => cfg.CreateMap<CategoryDto, Category>());
 
-            var config3 = new MapperConfiguration(cfg => cfg.CreateMap<Category, CategoryFormViewModel>());
+           
 
             var config4 = new MapperConfiguration(cfg => cfg.CreateMap<CategoryFormViewModel, Category>());
 
@@ -28,13 +28,15 @@ namespace LaptopMart.App_Start
             var config8 = new MapperConfiguration(cfg => cfg.CreateMap<ProductDto, Product>());
             
             CreateMap<ProductFormViewModel, Product>()
-                .ForMember(m => m.Category,opt => opt.Ignore())
+                .ForMember(m => m.Categories,opt => opt.Ignore())
                 .ForMember(m => m.Supplier, opt => opt.Ignore())
                 .ForMember(m => m.SupplierName, opt => opt.Ignore());
 
-            var config10 = new MapperConfiguration(cfg => cfg.CreateMap<Product, ProductFormViewModel>());
+            CreateMap<Product, ProductFormViewModel>()
+                .ForMember(m => m.CategoryIds, opt => opt.Ignore());
 
 
+            CreateMap<Category, CategoryFormViewModel>().ForMember(m => m.ExistingCategories, opt => opt.Ignore());
         }
     }
         

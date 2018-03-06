@@ -3,6 +3,7 @@ using LaptopMart.Contracts;
 using LaptopMart.Controllers;
 using LaptopMart.Implementations;
 using LaptopMart.Models;
+using LaptopMart.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
@@ -57,7 +58,8 @@ namespace LaptopMart
             
             container.RegisterType<UserManager<ApplicationUser>>(new HierarchicalLifetimeManager());
             container.RegisterType<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>(new HierarchicalLifetimeManager());
-            container.RegisterType<AccountController>(new InjectionConstructor());
+            // container.RegisterType<AccountController>(new InjectionConstructor());
+            container.RegisterType<AccountController>(new InjectionConstructor(new ResolvedParameter<ICartService>()));
             container.RegisterType<DbContext, ApplicationDbContext>(new HierarchicalLifetimeManager());
             container.RegisterType<ManageController>(new InjectionConstructor());
             container.RegisterType<IAuthenticationManager>(
@@ -66,11 +68,16 @@ namespace LaptopMart
                 )
             );
 
-            container.RegisterType(typeof(IRepository<>), typeof(Repository<>));
+            
 
             container.RegisterType<IUnitOfWork, UnitOfWork>();
+            container.RegisterType<ICategoryRepository, CategoryRepository>();
+            container.RegisterType<ISupplierRepository, SupplierRepository>();
+            container.RegisterType<IProductRepository, ProductRepository>();
+            container.RegisterType<ICartService,CartService>();
+            container.RegisterType<ICartRepository, CartRepository>();
+            container.RegisterType<ICartItemRepository, CartItemRepository>();
 
-            
 
 
 

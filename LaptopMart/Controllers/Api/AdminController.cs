@@ -21,7 +21,7 @@ namespace LaptopMart.Controllers.Api
         [HttpGet]
         public IHttpActionResult GetCategories()
         {
-            var categoriesInDb = _unitOfWork.Repository<Category>().ReadAll();
+            var categoriesInDb = _unitOfWork.CategoryRepository.ReadAll();
 
             var categoriesDto = categoriesInDb.Select(Mapper.Map<Category, CategoryDto>);
 
@@ -32,7 +32,7 @@ namespace LaptopMart.Controllers.Api
         public IHttpActionResult DeleteCategory(int id)
         {
 
-            var deleteResult = _unitOfWork.Repository<Category>().Delete(id);
+            var deleteResult = _unitOfWork.CategoryRepository.Delete(id);
             _unitOfWork.Complete();
             if (deleteResult == null)
             {
@@ -46,7 +46,7 @@ namespace LaptopMart.Controllers.Api
 
         public IHttpActionResult GetSuppliers()
         {
-            var suppliersInDb = _unitOfWork.Repository<Supplier>().ReadAll();
+            var suppliersInDb = _unitOfWork.SupplierRepository.ReadAll();
             var suppliersDto = suppliersInDb.Select(Mapper.Map<Supplier, SupplierDto>);
             return Ok(suppliersDto);
         }
@@ -54,7 +54,7 @@ namespace LaptopMart.Controllers.Api
         [HttpDelete]
         public IHttpActionResult DeleteSupplier(int id)
         {
-            var deleteResult = _unitOfWork.Repository<Supplier>().DeleteSupplierByAdmin(id);
+            var deleteResult = _unitOfWork.SupplierRepository.DeleteSupplierByAdmin(id);
             _unitOfWork.Complete();
             
             if (deleteResult == null)
