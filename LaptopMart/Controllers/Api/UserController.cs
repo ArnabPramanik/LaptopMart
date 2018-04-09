@@ -7,7 +7,7 @@ using System.Web.Http;
 
 namespace LaptopMart.Controllers.Api
 {
-    [Authorize(Roles = Roles.RoleUser)]
+    [Authorize(Roles = Roles.RoleUser + "," + Roles.RoleSupplier)]
     public class UserController : ApiController
     {
 

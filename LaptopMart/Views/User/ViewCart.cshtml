@@ -8,63 +8,68 @@
 
 <table id="cart-item" class="table table-bordered table-hover">
     <thead>
-    <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Total</th>
-        <th></th>
-        
-    </tr>
-    </thead>
-    <tbody>
-    @{ decimal total = 0;}
-    @foreach (CartItemViewModel cartItem in Model)
-    {
         <tr>
-            <td><img src="~/Content/ProductImages/@cartItem.Image" height="50px" width="50px"/></td>
-            <td>@cartItem.Name</td>
-            <td>@cartItem.Price per item</td>
-            <td><button id="btn+@cartItem.CartItemId" class="btn-sm btn-default" onClick="addItem(@cartItem.CartItemId)">+</button> @Html.TextBox("Quantity", Convert.ToString(cartItem.Quantity), new {@class = "numeric", @id = "txt-box-" + cartItem.CartItemId, type = "text"})
-                <button id="btn-@cartItem.CartItemId" class="btn-sm btn-default" onClick="removeItem(@cartItem.CartItemId)">-</button>
-            </td>
-            <td>@(total += cartItem.Price * cartItem.Quantity)</td>
-            <td><a class="btn btn-danger" href="/user/RemoveCartItem?cartId=@cartItem.CartItemId">Remove</a></td>
+            <th></th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th></th>
 
         </tr>
-    }
+    </thead>
+    <tbody>
+        @{ decimal total = 0;}
+        @foreach (CartItemViewModel cartItem in Model)
+        {
+            <tr>
+                <td><img src="~/Content/ProductImages/@cartItem.Image" height="50px" width="50px" /></td>
+                <td>@cartItem.Name</td>
+                <td>@cartItem.Price per item</td>
+                <td>
+                    <button id="btn+@cartItem.CartItemId" class="btn-sm btn-default" onClick="addItem(@cartItem.CartItemId)">+</button> @Html.TextBox("Quantity", Convert.ToString(cartItem.Quantity), new { @class = "numeric", @id = "txt-box-" + cartItem.CartItemId, type = "text" })
+                    <button id="btn-@cartItem.CartItemId" class="btn-sm btn-default" onClick="removeItem(@cartItem.CartItemId)">-</button>
+                </td>
+                <td>@(total += cartItem.Price * cartItem.Quantity)</td>
+                <td><a class="btn btn-danger" href="/user/RemoveCartItem?cartId=@cartItem.CartItemId">Remove</a></td>
+
+            </tr>
+        }
     </tbody>
-    
+
 </table>
 
 <p>TOTAL = @total</p>
+@if (Model.Count() > 0)
+{
+    <a class="btn btn-danger" href="/User/Checkout/@Model.ElementAt(0).CartId">Purchase</a>
+}
 
 @section scripts
 {
     <script>
 
         function reload(quantity, cartItemId) {
-          
+
             $.ajax({
                 url: "/api/user/UpdateCart",
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
-                
-                data: JSON.stringify({ Quantity:quantity, CartItemId:cartItemId}),
+
+                data: JSON.stringify({ Quantity: quantity, CartItemId: cartItemId }),
                 success: function () {
                     window.location.href = "/user/ViewCart";
                 }
 
-        });
+            });
         }
-          
+
         function addItem(cartItemId) {
             var quantity = parseInt(document.getElementById("txt-box-" + cartItemId).value);
             quantity++;
             document.getElementById("txt-box-" + cartItemId).value = quantity;
-           
-            reload(quantity,cartItemId);
+
+            reload(quantity, cartItemId);
         }
 
         function removeItem(cartItemId) {
@@ -72,9 +77,9 @@
             if (quantity > 1) {
                 quantity--;
                 document.getElementById("txt-box-" + cartItemId).value = quantity;
-                reload(quantity,cartItemId);
+                reload(quantity, cartItemId);
             }
-            
+
         }
 
         var specialKeys = new Array();
@@ -93,19 +98,19 @@
                 return false;
             });
         });
-        $(document).ready(function() {
-        
+        $(document).ready(function () {
+
             $("#cart-item").DataTable();
 
-            $(".numeric").on("input",function(e){
+            $(".numeric").on("input", function (e) {
                 var value = $(this).val();
-                if($(this).data("lastval")!= value){
+                if ($(this).data("lastval") != value) {
 
                     $(this).data("lastval", value);
                     var theNum = $(this).attr('id').replace(/^\D+/g, '');
                     theNum = parseInt(theNum);
-                    reload(value,theNum);
-                
+                    reload(value, theNum);
+
                 };
             });
 

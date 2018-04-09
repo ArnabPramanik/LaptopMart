@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace LaptopMart.Controllers
 {
-    [Authorize(Roles = Roles.RoleUser)]
+    [Authorize(Roles = Roles.RoleUser+","+ Roles.RoleSupplier)]
     public class UserController : Controller
     {
         private ApplicationUserManager _userManager;
@@ -93,8 +93,8 @@ namespace LaptopMart.Controllers
                     Quantity = c.Quantity,
                     Name = p.Name,
                     Price = p.Price,
-                    Image = p.Image
-                    
+                    Image = p.Image,
+                    CartId = cart.Id
                  
                 } ;
                 return View(viewModel);
@@ -155,5 +155,11 @@ namespace LaptopMart.Controllers
 
         }
         
+        public ActionResult Checkout(int id)
+        {
+            _unitOfWork.CartRepository.Delete(id);
+            _unitOfWork.Complete();
+            return RedirectToAction("Index", "User");
+        }
     }
 }
